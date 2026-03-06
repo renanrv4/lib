@@ -19,3 +19,26 @@ void DFS(vector<vector<int>>& adj, vector<bool>& mark, int v, vector<bool>& seen
 
 // Kahn Toposort
 
+vector<int> deg(26, 0);
+bool cycle = false;
+string new_abc;
+string abc = "abcdefghijklmnopqrstuvwxyz";
+
+void BFS(vector<vector<int>>& adj) {
+    queue<int> queue_visit;
+    for(int i = 0; i < 26; i++) {
+        if(deg[i] == 0) {
+            queue_visit.push(i);
+        }
+    }
+    while(!queue_visit.empty()) {
+        int v = queue_visit.front(); queue_visit.pop();
+        new_abc += abc[v];
+        for(int i : adj[v]) {
+            deg[i]--;
+            if(deg[i] == 0) {
+                queue_visit.push(i);
+            }
+        }
+    }
+}
