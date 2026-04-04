@@ -1,30 +1,62 @@
-#include <bits/stdc++.h>
-
-using namespace std;
-
 #define ll long long
 
-class Fenwick {
-    private:
-        vector<int> ft;
-    public:
-        Fenwick(int n) { ft.resize(n+1, 0); }
+struct BIT {
+    ll n;
+    vector<ll> bit;
 
-        // RSQ(1, b)
-        int range_sum_query(int b) {
-            int sum = 0; for(; b; b -= (b & (-b))) {
-                sum += ft[b];
+    BIT(ll N) {
+        n = N;
+        bit.assign(n+1, 0);
+    }
+
+    ll query(ll x) {
+        ll res = 0;
+        while(x > 0) {
+            res += bit[x];
+            x -= (x & -x);
+        }
+        return res;
+    }
+    void update(ll x, ll val) {
+        while(x <= n) {
+            bit[x] += val;
+            x += (x & -x);
+        }
+    }
+
+    // Encontrar o K-ésimo elemento com BIT de frequência
+    int findKth(int k) {
+        int l = 1, r = n;
+        int pos = 0;
+        while(l <= r) {
+            int mid = (l+r)/2;
+            if(query(mid) >= k) {
+                pos = mid;
+                r = mid-1;
+            } else {
+                l = mid+1;
             }
-            return sum;
         }
-
-        // RSQ(a, b)
-        int range_sum_query(int a, int b) {
-            return range_sum_query(b) - (a == 1 ? 0 : range_sum_query(a - 1));
-        }
-
-        // Ajusta o valor do elemento na posição k com v 
-        void adjust(int k, int v) {
-            for(; k < (int)ft.size(); k += (k & (-k))) { ft[k] += v; }
-        }
+        return pos;
+    }
 };
+
+// Compressão de Coordenadas
+vector<ll> nums(n, 0);
+BIT bit(n);
+for(int i = 0; i < n; i++) {
+    cin >> nums[i];
+}
+vector<ll> coord_compr = nums;
+sort(coord_compr.begin(), coord_compr.end());
+for(int i = 0; i < n; i++) {
+    nums[i] = lower_bound(coord_compr.begin(), coord_compr.end(), nums[i]) - coord_compr.begin() + 1;
+}
+
+// Contar Inversões
+ll qtd_invs = 0;
+for(int i = n -1; i >= 0; i--) {
+    qtd_invs += bit.query(crossings[i]);
+    bit.update(crossings[i], 1); 
+}
+cout << qtd_invs << "\n";
