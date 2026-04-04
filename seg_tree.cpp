@@ -1,68 +1,66 @@
+// Exemplo de uma Seg Tree de mínimos
 #include <bits/stdc++.h>
 
 using namespace std;
 
-// Variáveis de inicialização
-const int N = 1e5;
+#define ll long long
+
+const int N = 2e5 + 5;
 int n;
-int t[2*N];
+ll seg[4*N];
+vector<ll> elements;
 
-// Constrói a árvore usando os filhos que estão no range de n até 2n
-void build() {
-    for(int i = n - 1; i > 0; --i) { t[i] = t[i<<1] + t[i<<1|1]; }
+ll join(ll a, ll b) {
+    return min(a, b);
 }
 
-// Modifica o valor da posição p para value e atualiza o resto da árvore
-void modify(int p, int value) {
-    p += n;
-    for(t[p] = value; p > 1; p >>= 1) {
-        t[p>>1] = t[p] + t[p^1];
+void build(int l = 0, int r = n - 1, int idx = 0) {
+    if(l == r) {
+        seg[idx] = elements[l];
+        return;
     }
+    int mid = (l+r)/2;
+    build(l, mid, 2*idx+1);
+    build(mid+1, r, 2*idx+2);
+    seg[idx] = join(seg[2*idx+1], seg[2*idx+2]);
 }
 
-// Calcula o valor da soma que contém todos os elementos de l até r
-int query(int l, int r) {
-    int res = 0;
-    l += n;
-    r += n;
-    for(l, r; l < r; l >>= 1, r >>= 1) {
-        if(l&1) {
-            res += t[l++];
-        }
-        if(r&1) {
-            res += t[--r];
-        }
+ll query(int L, int R, int l = 0, int r = n - 1, int idx = 0) {
+    if(R < l || L > r) {
+        return LLONG_MAX;
     }
-    return res;
-}
-
-//Lógica para contar a frequência durante o intervalo
-pair<long long, int> combine(pair<long long, int> a, pair<long long, int> b) {
-    if (a.first < b.first) return a;
-    if (b.first < a.first) return b;
-    return {a.first, a.second + b.second};
-}
-
-void update(vector<pair<long long, int>>& base, int i, int val, int n) {
-    i += n;
-    base[i] = {val, 1};
-    for (int j = i; j > 1; j /= 2) {
-        base[j/2] = combine(base[j], base[j ^ 1]);
+    if(L <= l && r <= R) {
+        return seg[idx];
     }
+    int mid = (l+r)/2;
+    return join(query(L, R, l, mid, 2*idx+1), query(L, R, mid+1, r, 2*idx+2));
 }
 
-pair<long long, int> query(vector<pair<long long, int>>& base, int a, int b, int n) {
-    int l = a + n;
-    int r = b + n;
-    pair<long long, int> resp = {1e18, 0};
-    
-    for (; l < r; l /= 2, r /= 2) {
-        if (l % 2 == 1) {
-            resp = combine(resp, base[l++]);
-        }
-        if (r % 2 == 1) {
-            resp = combine(resp, base[--r]);
-        }
+void update(int i, ll val, int l = 0, int r = n-1, int idx = 0) {
+    if(l == r) {
+        seg[idx] = val;
+        return;
     }
-    return resp;
+    int mid = (l+r)/2;
+    if(i <= mid) {
+        update(i, val, l, mid, 2*idx+1);
+    } else {
+        update(i, val, mid+1, r, 2*idx+2);
+    }
+    seg[idx] = join(seg[2*idx+1], seg[2*idx+2]);
+}
+
+int main() {
+    ios_base::sync_with_stdio(0); cin.tie(nullptr);
+    int q; cin >> n >> q;
+    elements.resize(n);
+    for(int i = 0; i < n; i++) {
+        cin >> elements[i];
+    }
+    build();
+    while(q--) {
+        int l, r; cin >> l >> r; l--; r--;
+        cout << query(l, r) << "\n";
+    }
+    return 0;
 }
