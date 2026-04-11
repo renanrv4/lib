@@ -6,3 +6,8 @@ double dist2(const Point& p, const Point& q) { return dot(p-q, p-q); }
 Point normalize(const Point& p) { return p/hypot(p.x, p.y); }
 double angle(const Point& p, Point& q) { return atan2(cross(p, q), dot(p, q)); }
 double angle(const Point& p) { return atan2(p.y, p.x); }
+
+// Perpendicular ao ponto p
+Point perp(const Point& p) {
+    return Point(-p.y, p.x); // 90 graus
+}
