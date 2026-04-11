@@ -11,3 +11,8 @@ double angle(const Point& p) { return atan2(p.y, p.x); }
 Point perp(const Point& p) {
     return Point(-p.y, p.x); // 90 graus
 }
+
+// Distância entre ponto e reta
+double distPointLine(Point p, Point a, Point b) {
+    return fabs(cross(b - a, p - a)) / norm(b - a);
+}
