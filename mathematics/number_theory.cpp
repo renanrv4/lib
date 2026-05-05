@@ -14,6 +14,10 @@ ll mod_mul(ll a, ll b) {
     return (a % MOD * b % MOD) % MOD;
 }
 
+ll mod_sub(ll a, ll b) {
+    return (a - b + MOD) % MOD;
+}
+
 ll fexp(ll a, ll b) {
     ll res = 1;
     while(b) {
