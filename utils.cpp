@@ -11,3 +11,7 @@ i128 lcmgcd(ll a, ll b) {
 }
 // Dps checa se o lcm é maior que 1e18 e decide o que fazer (ignora ou outra coisa)
 
+// -----------------------------------------------
+
+// Cuidado com re-hashing do map e unordered_map
+// Usar .reserve
