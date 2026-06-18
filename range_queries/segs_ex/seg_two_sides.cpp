@@ -4,6 +4,11 @@
 // Nesse exemplo cada valor posto contribuía com um fator de iluminação, sua contribuição para cada posição é dada por: bright * (factor ^ |x - i|) | x sendo a posição da lampâda e i sendo a posição atual
 // Como a ideia é fazer um somatório de contribuições, podemos multiplicar o fator r^x no final
 // Ou seja os nós de cada seg guardam r^-i ou r^i, indicando sua contribuição.
+
+// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+// TAMBÉM DÁ PRA FAZER COM DUAS BITS
+// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
 #include <bits/stdc++.h>
 
 using namespace std;
@@ -30,6 +35,10 @@ ll fexp(ll a, ll b) {
 ll inv(ll a) {
     return fexp(a, MOD-2);
 }
+
+// =========================
+// VERSÃO COM DUAS SEGS
+// =========================
 
 int n;
 const int N = 2e5 + 5;
@@ -105,6 +114,46 @@ int main() {
                 update(x, MOD - b);
             } else {
                 update(x, b);
+            }
+        }
+    }
+    return 0;
+}
+
+// =====================
+// VERSÃO COM DUAS BITS
+// =====================
+
+int main() {
+    ios_base::sync_with_stdio(0); cin.tie(nullptr);
+    int n, q; double p; cin >> n >> q >> p;
+    vector<ll> powp(n+1), invpowp(n+1);
+    BIT bitleft(n), bitright(n);
+    p *= 1000000;
+    ll p_ll = llround(p);
+    ll pdef = mod_mul(1000000 - p_ll, inv(1000000));
+    ll pdef_inv = inv(pdef);
+    powp[0] = 1; invpowp[0] = 1;
+    for(int i = 1; i <= n; i++) {
+        powp[i] = mod_mul(powp[i-1], pdef);
+        invpowp[i] = mod_mul(invpowp[i-1], pdef_inv);
+    }
+    while(q--) {
+        char op; cin >> op;
+        if(op == '?') {
+            int x; cin >> x;
+            ll sum_left = bitleft.query(x);
+            ll sum_right = (bitright.query(n) - bitright.query(x) + MOD) % MOD;
+            ll res = (mod_mul(powp[x], sum_left) + mod_mul(invpowp[x], sum_right)) % MOD;
+            cout << res << "\n";
+        } else {
+            ll b; int x; cin >> b >> x;
+            if(op == '-') {
+                bitleft.update(x, mod_mul(MOD - b, invpowp[x]));
+                bitright.update(x, mod_mul(MOD - b, powp[x]));
+            } else {
+                bitleft.update(x, mod_mul(b, invpowp[x]));
+                bitright.update(x, mod_mul(b, powp[x]));
             }
         }
     }
