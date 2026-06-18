@@ -1,5 +1,9 @@
 // Exemplo de questão em que a atualização ocorre em ambos os lados
 // ******* USANDO DUAS SEGS PARA PROPAGAR DIREITA E ESQUERDA COM BASE NA CONTRIBUIÇÃO ********
+
+// Nesse exemplo cada valor posto contribuía com um fator de iluminação, sua contribuição para cada posição é dada por: bright * (factor ^ |x - i|) | x sendo a posição da lampâda e i sendo a posição atual
+// Como a ideia é fazer um somatório de contribuições, podemos multiplicar o fator r^x no final
+// Ou seja os nós de cada seg guardam r^-i ou r^i, indicando sua contribuição.
 #include <bits/stdc++.h>
 
 using namespace std;
