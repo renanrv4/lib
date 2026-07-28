@@ -1,5 +1,7 @@
 const int MAXV = 1 << 21;
 
+// **** A inversa da sos dp basta subtrair ****
+
 // sub_mask // usa a presença de valores na submask
 vector<int> or_conv(vector<int> freq) {
     for(int len = 1; len < freq.size(); len *= 2) {
