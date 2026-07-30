@@ -15,3 +15,14 @@ i128 lcmgcd(ll a, ll b) {
 
 // Cuidado com re-hashing do map e unordered_map
 // Usar .reserve
+
+// -----------------------------------------------
+
+// Estratégia de random shuffle para algoritmos randomizados
+
+void random_shuffle(vector<int>& vec, int n) {
+    for(int i = 0; i < n; i++) {
+        int j = rand() % (i+1);
+        swap(vec[i], vec[j]);
+    }
+}
