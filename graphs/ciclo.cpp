@@ -32,19 +32,27 @@ int dfs(int atual, int anterior, vector<vector<int>>& adj) {
     return -1;
 }
 
-int main() {
-    ios_base::sync_with_stdio(0); cin.tie(nullptr);
-    int n; cin >> n;
-    vector<vector<int>> adj(n);
-    for(int i = 0; i < n; i++) {
-        int a, b; cin >> a >> b;
-        adj[a].push_back(b);
-        adj[b].push_back(a);
+// Encontrando ciclo em grafo funcional
+
+vector<int> nxt;
+vector<int> state;
+vector<int> pos;
+vector<int> path;
+vector<bool> ciclo;
+ 
+void dfs(int v) {
+    state[v] = 1;
+    pos[v] = path.size();
+    path.push_back(v);
+ 
+    int u = nxt[v];
+    if(state[u] == 0) {
+        dfs(u);
+    } else if(state[u] == 1) {
+        for(int i = pos[u]; i < path.size(); i++) {
+            ciclo[path[i]] = true;
+        }
     }
-    dfs(0, 0, adj);
-    for(int i : ciclo) {
-        cout << i << " ";
-    }
-    cout << "\n";
-    return 0;
+    path.pop_back();
+    state[v] = 2;
 }
